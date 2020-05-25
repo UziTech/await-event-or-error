@@ -1,3 +1,6 @@
+[![Actions Status](https://github.com/UziTech/await-event-or-error/workflows/CI/badge.svg)](https://github.com/UziTech/await-event-or-error/actions)
+
+
 # await-event-or-error
 Returns a Promise that resolves on an event or rejects on an error
 
