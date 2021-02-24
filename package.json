@@ -1,6 +1,6 @@
 {
   "name": "await-event-or-error",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Returns a Promise that resolves on an event or rejects on an error",
   "main": "src/await-event-or-error.js",
   "scripts": {
