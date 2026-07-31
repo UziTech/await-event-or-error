@@ -4,9 +4,9 @@
   "description": "Returns a Promise that resolves on an event or rejects on an error",
   "main": "src/await-event-or-error.js",
   "scripts": {
-    "test": "jest --verbose",
-    "test:cover": "jest --coverage",
-    "lint": "eslint ."
+    "test": "node --test",
+    "test:cover": "node --experimental-test-coverage --test",
+    "lint": "eslint"
   },
   "repository": {
     "type": "git",
@@ -33,7 +33,6 @@
     "@semantic-release/release-notes-generator": "^14.1.1",
     "eslint": "^10.8.0",
     "globals": "^17.8.0",
-    "jest-cli": "^30.4.2",
     "semantic-release": "^25.0.8"
   },
   "release": {
