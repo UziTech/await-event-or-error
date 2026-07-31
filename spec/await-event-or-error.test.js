@@ -1,3 +1,5 @@
+const {describe, test, beforeEach} = require("node:test");
+const assert = require("node:assert/strict");
 const {EventEmitter} = require("events");
 const awaitEventOrError = require("../");
 
@@ -10,27 +12,27 @@ describe("await-event-or-error", () => {
 
 	describe("invalid arguments", () => {
 		test("should throw when no emitter", () => {
-			expect(() => {
+			assert.throws(() => {
 				awaitEventOrError();
-			}).toThrow();
+			});
 		});
 
 		test("should throw when no successEvent", () => {
-			expect(() => {
+			assert.throws(() => {
 				awaitEventOrError(emitter);
-			}).toThrow();
+			});
 		});
 
 		test("should throw when invalid emitter", () => {
-			expect(() => {
+			assert.throws(() => {
 				awaitEventOrError({}, "success");
-			}).toThrow();
+			});
 		});
 
 		test("should throw when invalid successEvent", () => {
-			expect(() => {
+			assert.throws(() => {
 				awaitEventOrError(emitter, {});
-			}).toThrow();
+			});
 		});
 	});
 
@@ -41,19 +43,19 @@ describe("await-event-or-error", () => {
 		test("should pass on event", async () => {
 			const promise = emitter.eventOrError("success");
 			emitter.emit("success");
-			await expect(promise).resolves.not.toThrow();
+			await assert.doesNotReject(promise);
 		});
 
 		test("should fail on error", async () => {
 			const promise = emitter.eventOrError("success");
 			emitter.emit("error", new Error("Error"));
-			await expect(promise).rejects.toThrow("Error");
+			await assert.rejects(promise, {message: "Error"});
 		});
 
 		test("should fail on responseError", async () => {
 			const promise = emitter.eventOrError("success", "responseError");
 			emitter.emit("responseError", new Error("Error"));
-			await expect(promise).rejects.toThrow("Error");
+			await assert.rejects(promise, {message: "Error"});
 		});
 	});
 
@@ -61,19 +63,19 @@ describe("await-event-or-error", () => {
 		test("should pass on event", async () => {
 			const promise = awaitEventOrError(emitter, "success");
 			emitter.emit("success");
-			await expect(promise).resolves.not.toThrow();
+			await assert.doesNotReject(promise);
 		});
 
 		test("should fail on error", async () => {
 			const promise = awaitEventOrError(emitter, "success");
 			emitter.emit("error", new Error("Error"));
-			await expect(promise).rejects.toThrow("Error");
+			await assert.rejects(promise, {message: "Error"});
 		});
 
 		test("should fail on responseError", async () => {
 			const promise = awaitEventOrError(emitter, "success", "responseError");
 			emitter.emit("responseError", new Error("Error"));
-			await expect(promise).rejects.toThrow("Error");
+			await assert.rejects(promise, {message: "Error"});
 		});
 	});
 
@@ -81,19 +83,19 @@ describe("await-event-or-error", () => {
 		test("should return array on event", async () => {
 			const promise = awaitEventOrError(emitter, "success");
 			emitter.emit("success");
-			await expect(promise).resolves.toEqual([]);
+			assert.deepStrictEqual(await promise, []);
 		});
 
 		test("should return array on single argument", async () => {
 			const promise = awaitEventOrError(emitter, "success");
 			emitter.emit("success", "arg1");
-			await expect(promise).resolves.toEqual(["arg1"]);
+			assert.deepStrictEqual(await promise, ["arg1"]);
 		});
 
 		test("should return array on multiple argument", async () => {
 			const promise = awaitEventOrError(emitter, "success");
 			emitter.emit("success", 1, 2);
-			await expect(promise).resolves.toEqual([1, 2]);
+			assert.deepStrictEqual(await promise, [1, 2]);
 		});
 	});
 
@@ -102,8 +104,8 @@ describe("await-event-or-error", () => {
 			const promise1 = awaitEventOrError(emitter, "success");
 			const promise2 = awaitEventOrError(emitter, "success");
 			emitter.emit("success", 1);
-			await expect(promise1).resolves.toEqual([1]);
-			await expect(promise2).resolves.toEqual([1]);
+			assert.deepStrictEqual(await promise1, [1]);
+			assert.deepStrictEqual(await promise2, [1]);
 		});
 
 		test("should resolve only event", async () => {
@@ -111,24 +113,24 @@ describe("await-event-or-error", () => {
 			const promise2 = awaitEventOrError(emitter, "success2");
 			emitter.emit("success", 1);
 			emitter.emit("success2", 2);
-			await expect(promise1).resolves.toEqual([1]);
-			await expect(promise2).resolves.toEqual([2]);
+			assert.deepStrictEqual(await promise1, [1]);
+			assert.deepStrictEqual(await promise2, [2]);
 		});
 
 		test("should reject all events on error", async () => {
 			const promise1 = awaitEventOrError(emitter, "success");
 			const promise2 = awaitEventOrError(emitter, "success");
 			emitter.emit("error", new Error("Error"));
-			await expect(promise1).rejects.toThrow("Error");
-			await expect(promise2).rejects.toThrow("Error");
+			await assert.rejects(promise1, {message: "Error"});
+			await assert.rejects(promise2, {message: "Error"});
 		});
 
 		test("should reject all events on error", async () => {
 			const promise1 = awaitEventOrError(emitter, "success");
 			const promise2 = awaitEventOrError(emitter, "success2");
 			emitter.emit("error", new Error("Error"));
-			await expect(promise1).rejects.toThrow("Error");
-			await expect(promise2).rejects.toThrow("Error");
+			await assert.rejects(promise1, {message: "Error"});
+			await assert.rejects(promise2, {message: "Error"});
 		});
 	});
 });
